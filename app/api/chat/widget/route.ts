@@ -1,5 +1,3 @@
-'use client';
-
 import {
   convertToModelMessages,
   createUIMessageStream,
@@ -13,6 +11,7 @@ import { systemPrompt } from "@/lib/ai/prompts";
 import { generateUUID } from "@/lib/utils";
 
 export const maxDuration = 60;
+export const dynamic = "force-dynamic";
 
 // Simplified widget endpoint - no auth required, no persistence
 export async function POST(request: Request) {
