@@ -18,8 +18,8 @@ export async function POST(request: Request) {
     const { messages, id } = await request.json();
 
     const requestHints = {
-      latitude: null,
-      longitude: null,
+      latitude: undefined,
+      longitude: undefined,
       city: "Unknown",
       country: "Unknown",
     };
