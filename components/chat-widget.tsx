@@ -5,7 +5,7 @@ import { DefaultChatTransport } from "ai";
 import { useState, useId, useRef, useEffect } from "react";
 import { Send } from "lucide-react";
 
-export default function EmbedPage() {
+export default function ChatWidget() {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const uniqueId = useId();
