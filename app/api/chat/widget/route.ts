@@ -9,13 +9,11 @@ import {
 import { getLanguageModel } from "@/lib/ai/providers";
 import { systemPrompt } from "@/lib/ai/prompts";
 import { generateUUID } from "@/lib/utils";
-import { unstable_noStore as noStore } from "next/cache";
 
 export const maxDuration = 60;
 
 // Simplified widget endpoint - no auth required, no persistence
 export async function POST(request: Request) {
-  noStore();
   try {
     const { messages, id } = await request.json();
 

@@ -1,9 +1,11 @@
 import { Chat } from "@/components/chat";
 import { generateUUID } from "@/lib/utils";
 import { auth } from "@/app/(auth)/auth";
+import { unstable_noStore as noStore } from "next/cache";
 
 export default async function WidgetPage() {
   const session = await auth();
+  noStore();
   
   // For widget, we'll allow anonymous users with a generated ID
   const chatId = generateUUID();
