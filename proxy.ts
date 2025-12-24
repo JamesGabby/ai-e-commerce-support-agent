@@ -5,10 +5,18 @@ import { guestRegex, isDevelopmentEnvironment } from "./lib/constants";
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  /*
-   * Playwright starts the dev server and requires a 200 status to
-   * begin the tests, so this ensures that the tests can start
-   */
+  // ============================================
+  // PUBLIC ROUTES - No auth required
+  // These must be checked FIRST before any auth
+  // ============================================
+  if (pathname.startsWith("/embed")) {
+    return NextResponse.next();
+  }
+
+  if (pathname.startsWith("/api/chat/widget")) {
+    return NextResponse.next();
+  }
+
   if (pathname.startsWith("/ping")) {
     return new Response("pong", { status: 200 });
   }
@@ -17,6 +25,9 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // ============================================
+  // PROTECTED ROUTES - Auth required
+  // ============================================
   const token = await getToken({
     req: request,
     secret: process.env.AUTH_SECRET,
@@ -25,7 +36,6 @@ export async function proxy(request: NextRequest) {
 
   if (!token) {
     const redirectUrl = encodeURIComponent(request.url);
-
     return NextResponse.redirect(
       new URL(`/api/auth/guest?redirectUrl=${redirectUrl}`, request.url)
     );
@@ -42,18 +52,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/",
-    "/chat/:id",
-    "/api/:path*",
-    "/login",
-    "/register",
-
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
-     */
     "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
   ],
 };
