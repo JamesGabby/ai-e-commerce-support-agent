@@ -107,7 +107,7 @@ export default function ChatWidget() {
                 TechGear Support
                 <Sparkles size={16} className="text-yellow-300 animate-pulse" />
               </h1> */}
-              <div className="flex items-center gap-2 mt-0.5">
+              <div className="flex items-center"> 
                 <span className={`inline-flex items-center gap-1.5 text-sm ${isLoading ? 'text-yellow-200' : 'text-white/80'}`}>
                   {isLoading ? (
                     <>
