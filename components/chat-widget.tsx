@@ -92,21 +92,21 @@ export default function ChatWidget() {
 
           <div className="relative flex items-center gap-4">
             {/* Logo/Avatar */}
-            <div className="relative">
+            {/* <div className="relative">
               <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30 shadow-lg">
                 <Zap size={24} className="text-white" />
               </div>
-              {/* Status indicator */}
+
               <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-400 rounded-full border-2 border-purple-600 shadow-lg">
                 <span className="absolute inset-0 bg-emerald-400 rounded-full animate-ping opacity-75" />
               </span>
-            </div>
+            </div> */}
 
             <div className="flex-1">
-              <h1 className="font-bold text-xl tracking-tight flex items-center gap-2">
+              {/* <h1 className="font-bold text-xl tracking-tight flex items-center gap-2">
                 TechGear Support
                 <Sparkles size={16} className="text-yellow-300 animate-pulse" />
-              </h1>
+              </h1> */}
               <div className="flex items-center gap-2 mt-0.5">
                 <span className={`inline-flex items-center gap-1.5 text-sm ${isLoading ? 'text-yellow-200' : 'text-white/80'}`}>
                   {isLoading ? (
