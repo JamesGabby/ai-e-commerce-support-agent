@@ -38,6 +38,7 @@ import type { ChatMessage } from "@/lib/types";
 import { convertToUIMessages, generateUUID } from "@/lib/utils";
 import { generateTitleFromUserMessage } from "../../actions";
 import { type PostRequestBody, postRequestBodySchema } from "./schema";
+import { lookupOrder } from "@/lib/ai/tools/lookup-order";
 
 export const maxDuration = 60;
 
@@ -183,6 +184,7 @@ export async function POST(request: Request) {
                 "createDocument",
                 "updateDocument",
                 "requestSuggestions",
+                "lookupOrder",
               ],
           experimental_transform: isReasoningModel
             ? undefined
@@ -202,6 +204,7 @@ export async function POST(request: Request) {
               session,
               dataStream,
             }),
+            lookupOrder,
           },
           experimental_telemetry: {
             isEnabled: isProductionEnvironment,

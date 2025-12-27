@@ -1,0 +1,17 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "1d62ed4d56f8e3a179664f30a0297ad0"
+name = "techgear"
+application_url = "http://localhost:3000"
+embedded = false
+
+[webhooks]
+api_version = "2025-10"
+
+[access_scopes]
+scopes = "read_customers,read_fulfillments,read_orders,read_products"
+optional_scopes = []
+use_legacy_install_flow = false
+
+[auth]
+redirect_urls = ["http://localhost:3000/api/shopify/callback"]
