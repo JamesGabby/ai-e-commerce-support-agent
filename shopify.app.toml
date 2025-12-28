@@ -2,7 +2,7 @@
 
 client_id = "1d62ed4d56f8e3a179664f30a0297ad0"
 name = "techgear"
-application_url = "http://localhost:3000"
+application_url = "https://ai-e-commerce-support-agent.vercel.app"
 embedded = false
 
 [webhooks]
@@ -14,4 +14,4 @@ optional_scopes = []
 use_legacy_install_flow = false
 
 [auth]
-redirect_urls = ["http://localhost:3000/api/shopify/callback"]
+redirect_urls = ["http://localhost:3000/api/shopify/callback", "https://ai-e-commerce-support-agent.vercel.app/api/shopify/callback"]
