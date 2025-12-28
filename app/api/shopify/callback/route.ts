@@ -1,7 +1,4 @@
-// app/api/shopify/callback/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFileSync } from 'fs';
-import { join } from 'path';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -28,16 +25,18 @@ export async function GET(request: NextRequest) {
     const data = await response.json();
 
     if (data.access_token) {
-      // Save token to .env.local (for development)
-      // In production, use a database
-      console.log('=================================');
-      console.log('ACCESS TOKEN:', data.access_token);
-      console.log('=================================');
-      
+      // In production, show the token so you can add it to Vercel env vars
+      // IMPORTANT: Remove this in final production - just for initial setup
       return NextResponse.json({ 
         success: true, 
-        message: 'Token received! Check your terminal.',
-        token: data.access_token 
+        message: 'Add this token to your Vercel environment variables as SHOPIFY_ACCESS_TOKEN',
+        token: data.access_token,
+        instructions: [
+          '1. Copy the token above',
+          '2. Go to Vercel Dashboard → Settings → Environment Variables',
+          '3. Add/Update SHOPIFY_ACCESS_TOKEN with this value',
+          '4. Redeploy your app'
+        ]
       });
     }
 
