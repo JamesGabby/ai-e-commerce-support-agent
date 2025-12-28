@@ -39,6 +39,10 @@ import { convertToUIMessages, generateUUID } from "@/lib/utils";
 import { generateTitleFromUserMessage } from "../../actions";
 import { type PostRequestBody, postRequestBodySchema } from "./schema";
 import { lookupOrder } from "@/lib/ai/tools/lookup-order";
+import { lookupCustomer } from "@/lib/ai/tools/lookup-customer";
+import { getOrderHistory } from "@/lib/ai/tools/order-history";
+import { searchProductCatalog } from "@/lib/ai/tools/search-products";
+import { getTrackingInfo } from "@/lib/ai/tools/get-tracking";
 
 export const maxDuration = 60;
 
@@ -185,6 +189,10 @@ export async function POST(request: Request) {
                 "updateDocument",
                 "requestSuggestions",
                 "lookupOrder",
+                "lookupCustomer",
+                "getOrderHistory",
+                "searchProductCatalog",
+                "getTrackingInfo",
               ],
           experimental_transform: isReasoningModel
             ? undefined
@@ -205,6 +213,10 @@ export async function POST(request: Request) {
               dataStream,
             }),
             lookupOrder,
+            lookupCustomer,
+            getOrderHistory,
+            searchProductCatalog,
+            getTrackingInfo,
           },
           experimental_telemetry: {
             isEnabled: isProductionEnvironment,

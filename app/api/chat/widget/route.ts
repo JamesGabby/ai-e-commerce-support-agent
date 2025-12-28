@@ -10,6 +10,13 @@ import { getLanguageModel } from "@/lib/ai/providers";
 import { systemPrompt } from "@/lib/ai/prompts";
 import { generateUUID } from "@/lib/utils";
 
+// Import Shopify tools
+import { lookupOrder } from "@/lib/ai/tools/lookup-order";
+import { lookupCustomer } from "@/lib/ai/tools/lookup-customer";
+import { getOrderHistory } from "@/lib/ai/tools/order-history";
+import { searchProductCatalog } from "@/lib/ai/tools/search-products";
+import { getTrackingInfo } from "@/lib/ai/tools/get-tracking";
+
 export const maxDuration = 60;
 
 // Simplified widget endpoint - no auth required, no persistence
@@ -35,6 +42,20 @@ export async function POST(request: Request) {
           messages: await convertToModelMessages(messages),
           stopWhen: stepCountIs(5),
           experimental_transform: smoothStream({ chunking: "word" }),
+          experimental_activeTools: [
+            "lookupOrder",
+            "lookupCustomer",
+            "getOrderHistory",
+            "searchProductCatalog",
+            "getTrackingInfo",
+          ],
+          tools: {
+            lookupOrder,
+            lookupCustomer,
+            getOrderHistory,
+            searchProductCatalog,
+            getTrackingInfo,
+          },
         });
 
         result.consumeStream();

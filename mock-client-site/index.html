@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TechGear Store - Premium Tech Accessories</title>
+  <title>TechGear Snowboards - Premium Snowboards & Gear</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -12,184 +15,1422 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      background: #f5f5f5;
-      color: #333;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      line-height: 1.6;
     }
 
+    /* Header */
     header {
-      background: #1a1a2e;
+      background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
       color: white;
       padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
     .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
       font-size: 1.5rem;
-      font-weight: bold;
-      color: #4CAF50;
+      font-weight: 800;
+      color: white;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     nav a {
-      color: white;
+      color: #94a3b8;
       text-decoration: none;
-      margin-left: 2rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.2s;
     }
 
-    .hero {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    nav a:hover {
       color: white;
-      padding: 4rem 2rem;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    nav a.active {
+      color: white;
+      background: rgba(14, 165, 233, 0.2);
+    }
+
+    .nav-cta {
+      background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%) !important;
+      color: white !important;
+      margin-left: 1rem;
+    }
+
+    /* Promo Banner */
+    .promo-banner {
+      background: linear-gradient(90deg, #0ea5e9 0%, #6366f1 50%, #0ea5e9 100%);
+      background-size: 200% 100%;
+      animation: shimmer 3s linear infinite;
+      color: white;
       text-align: center;
+      padding: 0.75rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .promo-banner strong {
+      font-weight: 700;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0c1929 0%, #1a365d 50%, #1e3a5f 100%);
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      opacity: 0.15;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5L35 15L45 15L37 22L40 32L30 26L20 32L23 22L15 15L25 15Z' fill='%23ffffff' fill-opacity='0.4'/%3E%3C/svg%3E");
+      background-size: 60px 60px;
+    }
+
+    /* Animated snowflakes */
+    .snowflakes {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .snowflake {
+      position: absolute;
+      color: white;
+      opacity: 0.6;
+      font-size: 1rem;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-10px) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.6;
+      }
+      90% {
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateY(600px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 2rem;
+      max-width: 900px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(14, 165, 233, 0.2);
+      border: 1px solid rgba(14, 165, 233, 0.3);
+      color: #7dd3fc;
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(10px);
     }
 
     .hero h1 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 800;
+      color: white;
+      margin-bottom: 1.5rem;
+      line-height: 1.1;
+      text-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero h1 span {
+      background: linear-gradient(135deg, #0ea5e9 0%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .hero p {
-      font-size: 1.2rem;
-      opacity: 0.9;
+      font-size: 1.25rem;
+      color: #94a3b8;
+      max-width: 600px;
+      margin: 0 auto 2rem;
     }
 
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+      color: white;
+      box-shadow: 0 4px 20px rgba(14, 165, 233, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(14, 165, 233, 0.5);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Features Bar */
+    .features-bar {
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 1.5rem 2rem;
+    }
+
+    .features-grid {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #e0f2fe 0%, #e0e7ff 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .feature-text h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .feature-text p {
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+
+    /* Products Section */
     .products {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 0 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
     }
 
-    .products h2 {
+    .section-header {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .section-header h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-header p {
+      color: #64748b;
+      font-size: 1.1rem;
     }
 
     .product-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 2rem;
     }
 
     .product-card {
       background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      transition: transform 0.2s;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s;
+      border: 1px solid #e2e8f0;
     }
 
     .product-card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
     }
 
-    .product-card h3 {
+    .product-image {
+      height: 220px;
+      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-badge {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+      color: white;
+      padding: 0.35rem 0.75rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .product-badge.sale {
+      background: linear-gradient(135deg, #f43f5e 0%, #ec4899 100%);
+    }
+
+    .product-info {
+      padding: 1.5rem;
+    }
+
+    .product-category {
+      font-size: 0.8rem;
+      color: #0ea5e9;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
       margin-bottom: 0.5rem;
     }
 
-    .product-card .price {
-      color: #4CAF50;
+    .product-info h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 0.5rem;
+    }
+
+    .product-info p {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .product-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .product-price {
       font-size: 1.5rem;
-      font-weight: bold;
-      margin: 1rem 0;
+      font-weight: 800;
+      color: #0ea5e9;
     }
 
-    .product-card button {
-      width: 100%;
-      padding: 0.75rem;
-      background: #667eea;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
+    .product-price .original {
       font-size: 1rem;
+      color: #94a3b8;
+      text-decoration: line-through;
+      margin-left: 0.5rem;
+      font-weight: 500;
     }
 
-    .product-card button:hover {
-      background: #5a6fd6;
-    }
-
-    footer {
-      background: #1a1a2e;
-      color: white;
-      text-align: center;
-      padding: 2rem;
-      margin-top: 4rem;
-    }
-
-    /* Chat Widget iframe */
-    #chat-widget-container {
-      position: fixed;
-      bottom: 0;
-      right: 0;
-      z-index: 9999;
-    }
-
-    #chat-widget-container iframe {
+    .add-to-cart {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
       border: none;
-      width: 420px;
-      height: 550px;
+      color: white;
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .add-to-cart:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 20px rgba(14, 165, 233, 0.4);
+    }
+
+    /* Categories Section */
+    .categories {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      padding: 4rem 2rem;
+    }
+
+    .categories .section-header h2 {
+      color: white;
+    }
+
+    .categories .section-header p {
+      color: #94a3b8;
+    }
+
+    .category-grid {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    .category-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .category-card:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-4px);
+    }
+
+    .category-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .category-card h3 {
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .category-card p {
+      color: #94a3b8;
+      font-size: 0.85rem;
+    }
+
+    /* Newsletter */
+    .newsletter {
+      background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .newsletter h2 {
+      color: white;
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .newsletter p {
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 2rem;
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .newsletter-form input {
+      flex: 1;
+      padding: 1rem 1.5rem;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    .newsletter-form button {
+      padding: 1rem 2rem;
+      background: #0f172a;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .newsletter-form button:hover {
+      background: #1e293b;
+      transform: translateY(-2px);
+    }
+
+    /* Footer */
+    footer {
+      background: #0f172a;
+      color: white;
+      padding: 4rem 2rem 2rem;
+    }
+
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    .footer-brand p {
+      color: #94a3b8;
+      margin: 1rem 0;
+      font-size: 0.95rem;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .footer-social a {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .footer-social a:hover {
+      background: #0ea5e9;
+      transform: translateY(-2px);
+    }
+
+    .footer-links h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: white;
+    }
+
+    .footer-links a {
+      display: block;
+      color: #94a3b8;
+      text-decoration: none;
+      margin-bottom: 0.75rem;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: #0ea5e9;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 2rem;
+      text-align: center;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    /* ==========================================
+   CHAT WIDGET - Premium Design
+   ========================================== */
+
+#chat-widget-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Toggle Button */
+#chat-toggle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+  color: white;
+  cursor: pointer;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Multi-layer shadow for depth */
+  box-shadow: 
+    0 4px 12px rgba(14, 165, 233, 0.4),
+    0 8px 24px rgba(99, 102, 241, 0.3),
+    0 0 0 0 rgba(14, 165, 233, 0.4);
+}
+
+/* Glow ring on hover */
+#chat-toggle::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 50%, #a855f7 100%);
+  z-index: -1;
+  opacity: 0;
+  transition: all 0.4s ease;
+  filter: blur(8px);
+}
+
+#chat-toggle:hover::before {
+  opacity: 0.6;
+  inset: -8px;
+}
+
+#chat-toggle:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 
+    0 8px 20px rgba(14, 165, 233, 0.5),
+    0 16px 40px rgba(99, 102, 241, 0.4);
+}
+
+#chat-toggle:active {
+  transform: scale(0.95);
+}
+
+/* Button inner shine */
+#chat-toggle::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  border-radius: 50% 50% 0 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+}
+
+/* Icons Container */
+.chat-icons {
+  position: relative;
+  width: 28px;
+  height: 28px;
+}
+
+/* Icon styles */
+.chat-icon-open,
+.chat-icon-close {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Chat bubble icon (SVG for crisp rendering) */
+.chat-icon-open svg {
+  width: 28px;
+  height: 28px;
+  fill: white;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+/* Close icon */
+.chat-icon-close svg {
+  width: 24px;
+  height: 24px;
+  stroke: white;
+  stroke-width: 2.5;
+  fill: none;
+}
+
+/* Icon transitions */
+.chat-closed .chat-icon-open {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.chat-closed .chat-icon-close {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.5);
+}
+
+.chat-open .chat-icon-open {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.5);
+}
+
+.chat-open .chat-icon-close {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+/* Open state button style */
+.chat-open #chat-toggle {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.chat-open #chat-toggle:hover::before {
+  opacity: 0;
+}
+
+/* ==========================================
+   NOTIFICATION BADGE - Premium Design
+   ========================================== */
+
+.notification-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  background: linear-gradient(135deg, #ef4444 0%, #f43f5e 100%);
+  border-radius: 12px;
+  border: 3px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 
+    0 2px 8px rgba(239, 68, 68, 0.5),
+    0 4px 16px rgba(239, 68, 68, 0.3);
+  z-index: 20;
+}
+
+/* Show badge when chat is closed */
+.chat-closed .notification-badge {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Badge pulse animation */
+.notification-badge::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 16px;
+  background: inherit;
+  opacity: 0;
+  z-index: -1;
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 0.4;
+  }
+}
+
+/* Badge ping animation for attention */
+.notification-badge::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: white;
+  opacity: 0;
+  animation: badgePing 3s ease-in-out infinite;
+}
+
+@keyframes badgePing {
+  0%, 90%, 100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  95% {
+    opacity: 0.3;
+    transform: scale(1.1);
+  }
+}
+
+/* ==========================================
+   GREETING BUBBLE (Optional)
+   ========================================== */
+
+.greeting-bubble {
+  position: absolute;
+  bottom: 80px;
+  right: 0;
+  background: white;
+  padding: 16px 20px;
+  border-radius: 16px 16px 4px 16px;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.1),
+    0 8px 40px rgba(0, 0, 0, 0.08);
+  max-width: 260px;
+  opacity: 0;
+  transform: translateY(10px) scale(0.95);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.chat-closed .greeting-bubble.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+.chat-open .greeting-bubble {
+  opacity: 0;
+  transform: translateY(10px) scale(0.95);
+  pointer-events: none;
+}
+
+.greeting-bubble p {
+  margin: 0;
+  font-size: 14px;
+  color: #1e293b;
+  line-height: 1.5;
+}
+
+.greeting-bubble p strong {
+  color: #0ea5e9;
+}
+
+.greeting-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: #f1f5f9;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #64748b;
+  transition: all 0.2s;
+}
+
+.greeting-close:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+/* Bubble arrow */
+.greeting-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  right: 24px;
+  width: 16px;
+  height: 16px;
+  background: white;
+  transform: rotate(45deg);
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* ==========================================
+   CHAT WINDOW
+   ========================================== */
+
+#chat-window {
+  position: absolute;
+  bottom: 80px;
+  right: 0;
+  width: 400px;
+  height: 600px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.15),
+    0 20px 60px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: bottom right;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+#chat-window iframe {
+  border: none;
+  width: 100%;
+  height: 100%;
+}
+
+/* Closed state */
+.chat-closed #chat-window {
+  opacity: 0;
+  transform: scale(0.85) translateY(20px);
+  pointer-events: none;
+}
+
+/* Open state */
+.chat-open #chat-window {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: all;
+}
+
+/* ==========================================
+   MOBILE RESPONSIVE
+   ========================================== */
+
+@media (max-width: 768px) {
+  #chat-widget-container {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  #chat-toggle {
+    width: 60px;
+    height: 60px;
+  }
+
+  .notification-badge {
+    top: -4px;
+    right: -4px;
+    min-width: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+
+  .greeting-bubble {
+    right: -8px;
+    max-width: 220px;
+  }
+
+  .chat-open #chat-window {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
+
+  .chat-open #chat-toggle {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    bottom: auto;
+    width: 48px;
+    height: 48px;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(10px);
+  }
+
+  .chat-open .notification-badge {
+    display: none;
+  }
+
+  .chat-open .greeting-bubble {
+    display: none;
+  }
+}
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .footer-content {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 1rem;
+      }
+      
+      nav {
+        display: none;
+      }
+      
+      .hero {
+        min-height: 500px;
+      }
+      
+      .hero h1 {
+        font-size: 2rem;
+      }
+      
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .category-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .newsletter-form {
+        flex-direction: column;
+      }
+      
+      .footer-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      
+      .footer-social {
+        justify-content: center;
+      }
+      
+      #chat-widget-container iframe {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+      }
+      
+      #chat-widget-container {
+        bottom: 0;
+        right: 0;
+        border-radius: 0;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Promo Banner -->
+  <div class="promo-banner">
+    🏂 <strong>WINTER SALE:</strong> Use code <strong>WINTER25</strong> for 25% off orders over $300! Free shipping on all orders 🚚
+  </div>
+
+  <!-- Header -->
   <header>
-    <div class="logo">⚡ TechGear Store</div>
-    <nav>
-      <a href="#">Products</a>
-      <a href="#">Deals</a>
-      <a href="#">Support</a>
-      <a href="#">Account</a>
-    </nav>
+    <div class="header-content">
+      <a href="#" class="logo">
+        <div class="logo-icon">🏔️</div>
+        TechGear Snowboards
+      </a>
+      <nav>
+        <a href="#" class="active">Snowboards</a>
+        <a href="#">Bindings</a>
+        <a href="#">Boots</a>
+        <a href="#">Apparel</a>
+        <a href="#">Sale</a>
+        <a href="#" class="nav-cta">Cart (0)</a>
+      </nav>
+    </div>
   </header>
 
+  <!-- Hero Section -->
   <section class="hero">
-    <h1>Premium Tech Accessories</h1>
-    <p>Upgrade your setup with our top-rated gear. Free shipping on orders over $50!</p>
-  </section>
+    <div class="hero-bg"></div>
+    
+    <!-- Animated Snowflakes -->
+    <div class="snowflakes">
+      <div class="snowflake" style="left: 10%; animation-duration: 8s; animation-delay: 0s;">❄</div>
+      <div class="snowflake" style="left: 20%; animation-duration: 10s; animation-delay: 1s;">❄</div>
+      <div class="snowflake" style="left: 30%; animation-duration: 7s; animation-delay: 2s;">❄</div>
+      <div class="snowflake" style="left: 40%; animation-duration: 9s; animation-delay: 0.5s;">❄</div>
+      <div class="snowflake" style="left: 50%; animation-duration: 11s; animation-delay: 3s;">❄</div>
+      <div class="snowflake" style="left: 60%; animation-duration: 8s; animation-delay: 1.5s;">❄</div>
+      <div class="snowflake" style="left: 70%; animation-duration: 10s; animation-delay: 2.5s;">❄</div>
+      <div class="snowflake" style="left: 80%; animation-duration: 7s; animation-delay: 0s;">❄</div>
+      <div class="snowflake" style="left: 90%; animation-duration: 9s; animation-delay: 1s;">❄</div>
+    </div>
 
-  <section class="products">
-    <h2>Featured Products</h2>
-    <div class="product-grid">
-      <div class="product-card">
-        <h3>🎧 Pro Wireless Headphones</h3>
-        <p>40-hour battery, ANC, premium sound</p>
-        <div class="price">$149.99</div>
-        <button>Add to Cart</button>
+    <div class="hero-content">
+      <div class="hero-badge">
+        ❄️ Winter 2025/2026 Collection Now Live
       </div>
-      <div class="product-card">
-        <h3>🔋 UltraCharge Power Bank</h3>
-        <p>20000mAh, 65W fast charging</p>
-        <div class="price">$59.99</div>
-        <button>Add to Cart</button>
-      </div>
-      <div class="product-card">
-        <h3>🏠 SmartHub Home Assistant</h3>
-        <p>Voice controlled, works with everything</p>
-        <div class="price">$199.99</div>
-        <button>Add to Cart</button>
-      </div>
-      <div class="product-card">
-        <h3>💻 ErgoMax Laptop Stand</h3>
-        <p>Adjustable height, aluminum build</p>
-        <div class="price">$79.99</div>
-        <button>Add to Cart</button>
+      <h1>Ride the <span>Mountain</span><br>Your Way</h1>
+      <p>Premium snowboards, bindings, and gear for every rider. From beginners to pros, find your perfect setup.</p>
+      <div class="hero-buttons">
+        <a href="#products" class="btn btn-primary">
+          🏂 Shop Snowboards
+        </a>
+        <a href="#" class="btn btn-secondary">
+          📏 Size Guide
+        </a>
       </div>
     </div>
   </section>
 
+  <!-- Features Bar -->
+  <div class="features-bar">
+    <div class="features-grid">
+      <div class="feature-item">
+        <div class="feature-icon">🚚</div>
+        <div class="feature-text">
+          <h4>Free Shipping</h4>
+          <p>On orders over $150</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">↩️</div>
+        <div class="feature-text">
+          <h4>Easy Returns</h4>
+          <p>30-day return policy</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🛡️</div>
+        <div class="feature-text">
+          <h4>2-Year Warranty</h4>
+          <p>On all snowboards</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">💬</div>
+        <div class="feature-text">
+          <h4>Expert Support</h4>
+          <p>Chat with our team</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Products Section -->
+  <section class="products" id="products">
+    <div class="section-header">
+      <h2>Featured Snowboards</h2>
+      <p>Top picks from our Winter 2025/2026 collection</p>
+    </div>
+    <div class="product-grid">
+      <div class="product-card">
+        <div class="product-image">
+          <span class="product-badge">Best Seller</span>
+          🏂
+        </div>
+        <div class="product-info">
+          <div class="product-category">All-Mountain</div>
+          <h3>The Complete Snowboard</h3>
+          <p>Premium all-mountain board with versatile flex. Perfect for any terrain.</p>
+          <div class="product-footer">
+            <div class="product-price">$699.95</div>
+            <button class="add-to-cart">+</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="product-card">
+        <div class="product-image">
+          <span class="product-badge sale">Sale</span>
+          🎿
+        </div>
+        <div class="product-info">
+          <div class="product-category">Freeride</div>
+          <h3>The Hidden Snowboard</h3>
+          <p>Designed for powder days and backcountry adventures.</p>
+          <div class="product-footer">
+            <div class="product-price">$749.95</div>
+            <button class="add-to-cart">+</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="product-card">
+        <div class="product-image">
+          <span class="product-badge">New</span>
+          ⛷️
+        </div>
+        <div class="product-info">
+          <div class="product-category">Freestyle</div>
+          <h3>The Minimal Snowboard</h3>
+          <p>Lightweight and responsive. Built for park and pipe.</p>
+          <div class="product-footer">
+            <div class="product-price">$885.95</div>
+            <button class="add-to-cart">+</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="product-card">
+        <div class="product-image">
+          🏔️
+        </div>
+        <div class="product-info">
+          <div class="product-category">All-Mountain</div>
+          <h3>The Compare at Price Snowboard</h3>
+          <p>Great value board for intermediate riders looking to progress.</p>
+          <div class="product-footer">
+            <div class="product-price">$785.95</div>
+            <button class="add-to-cart">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="categories">
+    <div class="section-header">
+      <h2>Shop by Category</h2>
+      <p>Find everything you need for the slopes</p>
+    </div>
+    <div class="category-grid">
+      <a href="#" class="category-card">
+        <div class="category-icon">🏂</div>
+        <h3>Snowboards</h3>
+        <p>All-mountain, freestyle & powder</p>
+      </a>
+      <a href="#" class="category-card">
+        <div class="category-icon">🔗</div>
+        <h3>Bindings</h3>
+        <p>Strap-in & step-on systems</p>
+      </a>
+      <a href="#" class="category-card">
+        <div class="category-icon">👢</div>
+        <h3>Boots</h3>
+        <p>All flex levels available</p>
+      </a>
+      <a href="#" class="category-card">
+        <div class="category-icon">🧥</div>
+        <h3>Apparel</h3>
+        <p>Jackets, pants & layers</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- Newsletter Section -->
+  <section class="newsletter">
+    <h2>Join the Crew 🤙</h2>
+    <p>Get exclusive deals, early access to new gear, and shred tips delivered to your inbox.</p>
+    <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Thanks for subscribing!');">
+      <input type="email" placeholder="Enter your email" required>
+      <button type="submit">Subscribe</button>
+    </form>
+  </section>
+
+  <!-- Footer -->
   <footer>
-    <p>© 2024 TechGear Store. All rights reserved.</p>
-    <p style="margin-top: 0.5rem; opacity: 0.7;">Questions? Chat with us using the widget below!</p>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <a href="#" class="logo">
+          <div class="logo-icon">🏔️</div>
+          TechGear Snowboards
+        </a>
+        <p>Premium snowboards and gear for every rider. From first turns to pro lines, we've got you covered.</p>
+        <div class="footer-social">
+          <a href="#">📷</a>
+          <a href="#">🐦</a>
+          <a href="#">📺</a>
+          <a href="#">📘</a>
+        </div>
+      </div>
+      
+      <div class="footer-links">
+        <h4>Shop</h4>
+        <a href="#">Snowboards</a>
+        <a href="#">Bindings</a>
+        <a href="#">Boots</a>
+        <a href="#">Apparel</a>
+        <a href="#">Accessories</a>
+      </div>
+      
+      <div class="footer-links">
+        <h4>Support</h4>
+        <a href="#">Contact Us</a>
+        <a href="#">Shipping Info</a>
+        <a href="#">Returns</a>
+        <a href="#">Size Guide</a>
+        <a href="#">FAQ</a>
+      </div>
+      
+      <div class="footer-links">
+        <h4>Company</h4>
+        <a href="#">About Us</a>
+        <a href="#">Team Riders</a>
+        <a href="#">Sustainability</a>
+        <a href="#">Careers</a>
+        <a href="#">Blog</a>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>© 2025 TechGear Snowboards. All rights reserved. | Questions? Chat with us using the widget! 💬</p>
+    </div>
   </footer>
 
-  <!-- CHAT WIDGET EMBED - This is what you'd give to clients -->
-  <div id="chat-widget-container">
+  <!-- Chat Widget Embed -->
+<div id="chat-widget-container" class="chat-closed">
+  
+  <!-- Toggle Button -->
+  <button id="chat-toggle" onclick="toggleChat()" aria-label="Toggle chat">
+    <!-- Notification Badge -->
+    <!-- <span class="notification-badge">1</span> -->
+    
+    <!-- Icons -->
+    <span class="chat-icons">
+      <!-- Chat Icon (Open state) -->
+      <span class="chat-icon-open">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C6.48 2 2 6.48 2 12C2 14.34 2.82 16.47 4.2 18.13L2.5 21.5L6.87 20.17C8.38 21.03 10.13 21.5 12 21.5C17.52 21.5 22 17.02 22 11.5C22 6.48 17.52 2 12 2ZM8 13C7.45 13 7 12.55 7 12C7 11.45 7.45 11 8 11C8.55 11 9 11.45 9 12C9 12.55 8.55 13 8 13ZM12 13C11.45 13 11 12.55 11 12C11 11.45 11.45 11 12 11C12.55 11 13 11.45 13 12C13 12.55 12.55 13 12 13ZM16 13C15.45 13 15 12.55 15 12C15 11.45 15.45 11 16 11C16.55 11 17 11.45 17 12C17 12.55 16.55 13 16 13Z"/>
+        </svg>
+      </span>
+      
+      <!-- Close Icon -->
+      <span class="chat-icon-close">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </span>
+    </span>
+  </button>
+  
+  <!-- Chat Window -->
+  <div id="chat-window">
     <iframe 
       src="http://localhost:3000/embed" 
       allow="microphone"
     ></iframe>
   </div>
+</div>
+
+<script>
+  // Toggle chat open/closed
+  function toggleChat() {
+    const container = document.getElementById('chat-widget-container');
+    const isOpening = container.classList.contains('chat-closed');
+    
+    container.classList.toggle('chat-closed');
+    container.classList.toggle('chat-open');
+    
+    // Hide greeting when chat opens
+    if (isOpening) {
+      closeGreeting();
+    }
+    
+    // Hide notification badge after opening
+    if (isOpening) {
+      const badge = document.querySelector('.notification-badge');
+      badge.style.display = 'none';
+    }
+  }
+
+  // Close greeting bubble
+  function closeGreeting() {
+    const greeting = document.getElementById('greeting-bubble');
+    greeting.classList.remove('show');
+  }
+
+  // Close chat with Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const container = document.getElementById('chat-widget-container');
+      if (container.classList.contains('chat-open')) {
+        toggleChat();
+      }
+    }
+  });
+
+  // Show greeting bubble after delay
+  setTimeout(() => {
+    const container = document.getElementById('chat-widget-container');
+    const greeting = document.getElementById('greeting-bubble');
+    
+    // Only show if chat is still closed
+    if (container.classList.contains('chat-closed')) {
+      greeting.classList.add('show');
+    }
+  }, 3000);
+
+  // Auto-hide greeting after longer delay
+  setTimeout(() => {
+    closeGreeting();
+  }, 15000);
+</script>
 </body>
 </html>

@@ -1,35 +1,17 @@
 // app/api/test-shopify/route.ts
-import { shopifyAdminRequest, getOrderByNumber } from '@/lib/shopify';
+import { searchProducts } from '@/lib/shopify';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const orderNumber = searchParams.get('order') || '#1001';
+  const query = searchParams.get('q') || 'snowboard';
 
   try {
-    // Test 1: Get all orders (raw response)
-    const allOrders = await shopifyAdminRequest(`
-      {
-        orders(first: 10) {
-          edges {
-            node {
-              id
-              name
-              email
-              createdAt
-            }
-          }
-        }
-      }
-    `);
-
-    // Test 2: Try to find specific order
-    const specificOrder = await getOrderByNumber(orderNumber);
-
+    const products = await searchProducts(query);
     return Response.json({ 
       success: true, 
-      allOrdersRaw: allOrders,
-      searchedFor: orderNumber,
-      foundOrder: specificOrder,
+      query,
+      count: products.length,
+      products 
     });
   } catch (error) {
     return Response.json({ 
