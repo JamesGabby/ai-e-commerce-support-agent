@@ -43,6 +43,8 @@ import { lookupCustomer } from "@/lib/ai/tools/lookup-customer";
 import { getOrderHistory } from "@/lib/ai/tools/order-history";
 import { searchProductCatalog } from "@/lib/ai/tools/search-products";
 import { getTrackingInfo } from "@/lib/ai/tools/get-tracking";
+import { cancelOrderTool } from "@/lib/ai/tools/cancel-order";
+import { verifyCustomer } from "@/lib/ai/tools/verify-customer";
 
 export const maxDuration = 60;
 
@@ -193,6 +195,8 @@ export async function POST(request: Request) {
                 "getOrderHistory",
                 "searchProductCatalog",
                 "getTrackingInfo",
+                "cancelOrderTool",
+                "verifyCustomer",
               ],
           experimental_transform: isReasoningModel
             ? undefined
@@ -217,6 +221,8 @@ export async function POST(request: Request) {
             getOrderHistory,
             searchProductCatalog,
             getTrackingInfo,
+            cancelOrderTool,
+            verifyCustomer,
           },
           experimental_telemetry: {
             isEnabled: isProductionEnvironment,
