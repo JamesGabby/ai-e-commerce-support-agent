@@ -332,8 +332,6 @@ function mapCancelReasonGraphQL(reason?: string): string {
   return 'CUSTOMER'; // Default
 }
 
-// lib/shopify.ts
-
 // Verify order belongs to customer by email
 export async function verifyOrderOwnership(orderNumber: string, email: string) {
   const normalized = orderNumber.startsWith('#') ? orderNumber : `#${orderNumber}`;
@@ -346,9 +344,21 @@ export async function verifyOrderOwnership(orderNumber: string, email: string) {
             id
             name
             email
+            createdAt
+            customer {
+              email
+            }
             displayFinancialStatus
             displayFulfillmentStatus
             cancelledAt
+            lineItems(first: 10) {
+              edges {
+                node {
+                  title
+                  quantity
+                }
+              }
+            }
           }
         }
       }
@@ -362,12 +372,19 @@ export async function verifyOrderOwnership(orderNumber: string, email: string) {
     return { verified: false, reason: 'Order not found', order: null };
   }
 
-  const orderEmail = order.email?.toLowerCase().trim();
   const customerEmail = email?.toLowerCase().trim();
+  const orderEmail = order.email?.toLowerCase().trim();
+  const customerObjectEmail = order.customer?.email?.toLowerCase().trim();
 
-  if (orderEmail !== customerEmail) {
-    return { verified: false, reason: 'Email does not match our records for this order', order: null };
+  const emailMatches = 
+    orderEmail === customerEmail || 
+    customerObjectEmail === customerEmail;
+
+  if (!emailMatches) {
+    console.log('❌ Email mismatch:', { provided: customerEmail, orderEmail, customerObjectEmail });
+    return { verified: false, reason: 'Email does not match our records', order: null };
   }
 
+  console.log('✅ Email verified:', customerEmail);
   return { verified: true, reason: null, order };
 }

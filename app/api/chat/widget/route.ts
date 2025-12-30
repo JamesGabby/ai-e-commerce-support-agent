@@ -18,6 +18,8 @@ import { searchProductCatalog } from "@/lib/ai/tools/search-products";
 import { getTrackingInfo } from "@/lib/ai/tools/get-tracking";
 import { cancelOrderTool } from "@/lib/ai/tools/cancel-order";
 import { verifyCustomer } from "@/lib/ai/tools/verify-customer";
+import { requestReturn } from "@/lib/ai/tools/request-return";
+import { createSupportTicket } from "@/lib/ai/tools/create-support-ticket";
 
 export const maxDuration = 60;
 
@@ -52,6 +54,8 @@ export async function POST(request: Request) {
             "getTrackingInfo",
             "cancelOrderTool",
             "verifyCustomer",
+            "requestReturn",
+            "createSupportTicket",
           ],
           tools: {
             lookupOrder,
@@ -61,6 +65,8 @@ export async function POST(request: Request) {
             getTrackingInfo,
             cancelOrderTool,
             verifyCustomer,
+            requestReturn,
+            createSupportTicket,
           },
         });
 
