@@ -388,3 +388,168 @@ export async function verifyOrderOwnership(orderNumber: string, email: string) {
   console.log('✅ Email verified:', customerEmail);
   return { verified: true, reason: null, order };
 }
+
+// lib/shopify.ts
+
+// Update shipping address on an order
+export async function updateOrderShippingAddress(
+  orderNumber: string,
+  newAddress: {
+    address1: string;
+    address2?: string;
+    city: string;
+    province: string;
+    zip: string;
+    country: string;
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+  }
+) {
+  const normalized = orderNumber.startsWith('#') ? orderNumber : `#${orderNumber}`;
+
+  console.log('📍 Updating shipping address for:', normalized);
+
+  // First, find the order and check if it can be modified
+  const findQuery = `
+    {
+      orders(first: 1, query: "name:${normalized}") {
+        edges {
+          node {
+            id
+            name
+            displayFulfillmentStatus
+            cancelledAt
+            shippingAddress {
+              address1
+              address2
+              city
+              province
+              zip
+              country
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  const findResult = await shopifyAdminRequest(findQuery);
+  const order = findResult?.data?.orders?.edges?.[0]?.node;
+
+  if (!order) {
+    return { success: false, error: `Order ${normalized} not found` };
+  }
+
+  if (order.cancelledAt) {
+    return { success: false, error: `Order ${normalized} has been cancelled` };
+  }
+
+  if (order.displayFulfillmentStatus === 'FULFILLED') {
+    return { 
+      success: false, 
+      error: `Order ${normalized} has already been shipped. We cannot change the address once an order is in transit.`,
+      suggestion: "Please contact the shipping carrier directly to redirect the package."
+    };
+  }
+
+  if (order.displayFulfillmentStatus === 'IN_PROGRESS') {
+    return { 
+      success: false, 
+      error: `Order ${normalized} is currently being prepared for shipment. The address may not be changeable at this point.`,
+      suggestion: "Please contact support immediately at support@techgearsnowboards.com"
+    };
+  }
+
+  // Update the shipping address using GraphQL mutation
+  const updateMutation = `
+    mutation orderUpdate($input: OrderInput!) {
+      orderUpdate(input: $input) {
+        order {
+          id
+          name
+          shippingAddress {
+            address1
+            address2
+            city
+            province
+            zip
+            country
+            firstName
+            lastName
+          }
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const variables = {
+    input: {
+      id: order.id,
+      shippingAddress: {
+        address1: newAddress.address1,
+        address2: newAddress.address2 || "",
+        city: newAddress.city,
+        provinceCode: newAddress.province,
+        zip: newAddress.zip,
+        countryCode: newAddress.country,
+        firstName: newAddress.firstName || "",
+        lastName: newAddress.lastName || "",
+        phone: newAddress.phone || "",
+      },
+    },
+  };
+
+  console.log('📤 Sending address update:', variables);
+
+  const response = await fetch(
+    `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/${process.env.SHOPIFY_API_VERSION}/graphql.json`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': process.env.SHOPIFY_ACCESS_TOKEN!,
+      },
+      body: JSON.stringify({ query: updateMutation, variables }),
+    }
+  );
+
+  const result = await response.json();
+  console.log('📥 Address update response:', JSON.stringify(result, null, 2));
+
+  // Check for errors
+  if (result.errors) {
+    return {
+      success: false,
+      error: result.errors.map((e: any) => e.message).join(', '),
+    };
+  }
+
+  const userErrors = result.data?.orderUpdate?.userErrors;
+  if (userErrors && userErrors.length > 0) {
+    return {
+      success: false,
+      error: userErrors.map((e: any) => e.message).join(', '),
+    };
+  }
+
+  const updatedOrder = result.data?.orderUpdate?.order;
+  
+  if (updatedOrder) {
+    return {
+      success: true,
+      orderNumber: updatedOrder.name,
+      message: `Shipping address updated successfully!`,
+      newAddress: updatedOrder.shippingAddress,
+    };
+  }
+
+  return {
+    success: false,
+    error: 'Unexpected error updating address',
+  };
+}

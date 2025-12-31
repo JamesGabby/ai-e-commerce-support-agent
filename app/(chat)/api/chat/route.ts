@@ -47,6 +47,7 @@ import { cancelOrderTool } from "@/lib/ai/tools/cancel-order";
 import { verifyCustomer } from "@/lib/ai/tools/verify-customer";
 import { requestReturn } from "@/lib/ai/tools/request-return";
 import { createSupportTicket } from "@/lib/ai/tools/create-support-ticket";
+import { updateShippingAddress } from "@/lib/ai/tools/update-shipping-address";
 
 export const maxDuration = 60;
 
@@ -201,6 +202,7 @@ export async function POST(request: Request) {
                 "verifyCustomer",
                 "requestReturn",
                 "createSupportTicket",
+                "updateShippingAddress",
               ],
           experimental_transform: isReasoningModel
             ? undefined
@@ -229,6 +231,7 @@ export async function POST(request: Request) {
             verifyCustomer,
             requestReturn,
             createSupportTicket,
+            updateShippingAddress
           },
           experimental_telemetry: {
             isEnabled: isProductionEnvironment,
