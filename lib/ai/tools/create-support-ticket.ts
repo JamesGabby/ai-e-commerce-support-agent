@@ -33,7 +33,7 @@ export const createSupportTicket = tool({
     category: z
       .enum([
         "order_issue",
-        "shipping", 
+        "shipping",
         "return_problem",
         "product_defect",
         "warranty",
@@ -59,46 +59,49 @@ export const createSupportTicket = tool({
 
     const responseTimes: Record<string, string> = {
       urgent: "within 2 hours",
-      high: "within 4 hours", 
+      high: "within 4 hours",
       medium: "within 24 hours",
       low: "within 48 hours",
     };
 
-    const categoryLabels: Record<string, string> = {
-      order_issue: "Order Issue",
-      shipping: "Shipping & Delivery",
-      return_problem: "Return Problem",
-      product_defect: "Product Defect",
-      warranty: "Warranty Claim",
-      refund_request: "Refund Request",
-      complaint: "Complaint",
-      general_inquiry: "General Inquiry",
-    };
+    // TODO: Actually save to database
+    // await db.insert(supportTickets).values({
+    //   id: ticketId,
+    //   tenantId: getCurrentTenantId(),
+    //   ...input,
+    //   createdAt: new Date(),
+    // });
 
-    console.log("📧 Ticket created:", {
-      id: ticketId,
-      ...input,
-    });
+    // TODO: Send notification email to business owner
+    // await sendNotificationEmail({
+    //   to: process.env.NOTIFICATION_EMAIL,
+    //   subject: `🔔 Support Ticket: ${input.subject}`,
+    //   body: `
+    //     New support ticket!
+    //     
+    //     Ticket ID: ${ticketId}
+    //     Priority: ${input.priority.toUpperCase()}
+    //     Category: ${input.category}
+    //     
+    //     Customer: ${input.customerName || 'Not provided'}
+    //     Email: ${input.customerEmail}
+    //     Order: ${input.orderNumber || 'N/A'}
+    //     
+    //     Issue:
+    //     ${input.description}
+    //   `
+    // });
 
     return {
       success: true,
       ticketId,
-      message: `Support ticket created!`,
-      details: {
-        email: input.customerEmail,
-        category: categoryLabels[input.category],
-        orderNumber: input.orderNumber || "N/A",
-      },
+      priority: input.priority,
       responseTime: responseTimes[input.priority],
-      whatToExpect: [
-        `📧 Confirmation email sent to ${input.customerEmail}`,
-        `⏰ A team member will respond ${responseTimes[input.priority]}`,
-        `🎫 Your ticket ID: ${ticketId}`,
-      ],
-      contactInfo: {
-        email: "support@techgearsnowboards.com",
-        phone: "1-800-SHRED-IT",
-      },
+      customerEmail: input.customerEmail,
+      // Give AI all info needed to construct response
+      supportEmail: "support@techgearsnowboards.com",
+      supportPhone: "1-800-SHRED-IT",
+      businessHours: "Monday-Friday 9AM-6PM EST, Saturday 10AM-4PM EST",
     };
   },
 });
