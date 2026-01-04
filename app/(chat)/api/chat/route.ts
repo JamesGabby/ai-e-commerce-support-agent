@@ -48,6 +48,7 @@ import { verifyCustomer } from "@/lib/ai/tools/verify-customer";
 import { requestReturn } from "@/lib/ai/tools/request-return";
 import { createSupportTicket } from "@/lib/ai/tools/create-support-ticket";
 import { updateShippingAddress } from "@/lib/ai/tools/update-shipping-address";
+import { captureLead } from "@/lib/ai/tools/capture-lead";
 
 export const maxDuration = 60;
 
@@ -203,6 +204,7 @@ export async function POST(request: Request) {
                 "requestReturn",
                 "createSupportTicket",
                 "updateShippingAddress",
+                "captureLead",
               ],
           experimental_transform: isReasoningModel
             ? undefined
@@ -231,7 +233,8 @@ export async function POST(request: Request) {
             verifyCustomer,
             requestReturn,
             createSupportTicket,
-            updateShippingAddress
+            updateShippingAddress,
+            captureLead,
           },
           experimental_telemetry: {
             isEnabled: isProductionEnvironment,

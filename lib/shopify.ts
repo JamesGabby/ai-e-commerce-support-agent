@@ -116,19 +116,107 @@ export async function getOrdersByCustomerEmail(email: string, limit: number = 5)
   return data?.data?.orders?.edges?.map((e: any) => e.node) || [];
 }
 
-// NEW: Search products
-export async function searchProducts(searchTerm: string, limit: number = 5) {
+interface SearchOptions {
+  limit?: number;
+  includeOutOfStock?: boolean;
+}
+
+interface ScoredProduct {
+  product: any;
+  score: number;
+}
+
+export async function searchProducts(
+  searchTerm: string,
+  options: SearchOptions = {}
+): Promise<any[]> {
+  const { limit = 10, includeOutOfStock = true } = options;
+
+  const tokens = tokenizeSearchTerm(searchTerm);
+
+  if (tokens.length === 0) {
+    return [];
+  }
+
+  // Execute multiple search strategies in parallel
+  const [titleResults, tagResults, broadResults] = await Promise.all([
+    searchByTitle(tokens, limit * 2),
+    searchByTags(tokens, limit * 2),
+    searchBroad(tokens[0], limit * 3),
+  ]);
+
+  // Combine, score, dedupe, and rank results
+  const allProducts = [...titleResults, ...tagResults, ...broadResults];
+  const uniqueProducts = deduplicateProducts(allProducts);
+  const scoredProducts = scoreProducts(uniqueProducts, tokens);
+
+  let results = scoredProducts
+    .sort((a, b) => b.score - a.score)
+    .map((sp) => sp.product);
+
+  if (!includeOutOfStock) {
+    results = results.filter((p) => p.totalInventory > 0);
+  }
+
+  return results.slice(0, limit);
+}
+
+function tokenizeSearchTerm(searchTerm: string): string[] {
+  const stopWords = new Set([
+    "the", "a", "an", "and", "or", "for", "to", "in", "on",
+  ]);
+
+  return searchTerm
+    .toLowerCase()
+    .replace(/['"]/g, "")
+    .split(/\s+/)
+    .map((token) => token.trim())
+    .filter((token) => token.length > 1 && !stopWords.has(token));
+}
+
+async function searchByTitle(tokens: string[], limit: number): Promise<any[]> {
+  const titleQuery = tokens
+    .map((token) => `title:*${escapeShopifyQuery(token)}*`)
+    .join(" AND ");
+
+  return executeProductQuery(titleQuery, limit);
+}
+
+async function searchByTags(tokens: string[], limit: number): Promise<any[]> {
+  const tagQuery = tokens
+    .map((token) => `tag:*${escapeShopifyQuery(token)}*`)
+    .join(" OR ");
+
+  return executeProductQuery(tagQuery, limit);
+}
+
+async function searchBroad(primaryToken: string, limit: number): Promise<any[]> {
+  const query = `*${escapeShopifyQuery(primaryToken)}*`;
+  return executeProductQuery(query, limit);
+}
+
+async function executeProductQuery(
+  searchQuery: string,
+  limit: number
+): Promise<any[]> {
   const query = `
     {
-      products(first: ${limit}, query: "title:*${searchTerm}*") {
+      products(first: ${limit}, query: "${searchQuery}") {
         edges {
           node {
             id
             title
             description
             handle
+            productType
+            tags
+            vendor
             priceRangeV2 {
               minVariantPrice {
+                amount
+                currencyCode
+              }
+              maxVariantPrice {
                 amount
                 currencyCode
               }
@@ -137,14 +225,20 @@ export async function searchProducts(searchTerm: string, limit: number = 5) {
             status
             featuredImage {
               url
+              altText
             }
-            variants(first: 5) {
+            variants(first: 10) {
               edges {
                 node {
+                  id
                   title
                   price
                   availableForSale
                   inventoryQuantity
+                  selectedOptions {
+                    name
+                    value
+                  }
                 }
               }
             }
@@ -154,8 +248,86 @@ export async function searchProducts(searchTerm: string, limit: number = 5) {
     }
   `;
 
-  const data = await shopifyAdminRequest(query);
-  return data?.data?.products?.edges?.map((e: any) => e.node) || [];
+  try {
+    const data = await shopifyAdminRequest(query);
+    return data?.data?.products?.edges?.map((e: any) => e.node) || [];
+  } catch (error) {
+    console.error("Shopify search error:", error);
+    return [];
+  }
+}
+
+function escapeShopifyQuery(term: string): string {
+  return term.replace(/[\\:"'()]/g, "\\$&");
+}
+
+function deduplicateProducts(products: any[]): any[] {
+  const seen = new Set<string>();
+  return products.filter((product) => {
+    if (seen.has(product.id)) {
+      return false;
+    }
+    seen.add(product.id);
+    return true;
+  });
+}
+
+function scoreProducts(products: any[], tokens: string[]): ScoredProduct[] {
+  return products.map((product) => {
+    let score = 0;
+    const titleLower = product.title?.toLowerCase() || "";
+    const descLower = product.description?.toLowerCase() || "";
+    const typeLower = product.productType?.toLowerCase() || "";
+    const tagsLower = (product.tags || []).join(" ").toLowerCase();
+
+    for (const token of tokens) {
+      // Title matches (highest weight)
+      if (titleLower.includes(token)) {
+        score += 10;
+        if (new RegExp(`\\b${token}\\b`).test(titleLower)) {
+          score += 5;
+        }
+      }
+
+      // Product type matches
+      if (typeLower.includes(token)) {
+        score += 8;
+      }
+
+      // Tag matches
+      if (tagsLower.includes(token)) {
+        score += 7;
+      }
+
+      // Description matches - KEY FIX for your issue
+      if (descLower.includes(token)) {
+        score += 5;
+        if (new RegExp(`\\b${token}\\b`).test(descLower)) {
+          score += 2;
+        }
+      }
+    }
+
+    // Bonus for matching ALL tokens
+    const matchCount = tokens.filter(
+      (token) =>
+        titleLower.includes(token) ||
+        descLower.includes(token) ||
+        typeLower.includes(token) ||
+        tagsLower.includes(token)
+    ).length;
+
+    if (matchCount === tokens.length) {
+      score += 15;
+    }
+
+    // Small bonus for in-stock items
+    if (product.totalInventory > 0) {
+      score += 1;
+    }
+
+    return { product, score };
+  });
 }
 
 // NEW: Get order with fulfillment/tracking details
@@ -551,5 +723,172 @@ export async function updateOrderShippingAddress(
   return {
     success: false,
     error: 'Unexpected error updating address',
+  };
+}
+
+type LeadCaptureResult = 
+  | { success: true; customer: any; isNew: boolean }
+  | { success: false; error: string };
+
+export async function captureLeadInShopify(leadData: {
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  tags?: string[];
+  note?: string;
+  marketingConsent?: boolean;
+}): Promise<LeadCaptureResult> {
+  console.log('📧 Capturing lead:', leadData.email);
+
+  // First check if customer already exists
+  const existingCustomer = await getCustomerByEmail(leadData.email);
+
+  if (existingCustomer) {
+    console.log('👤 Customer already exists, updating...');
+    return await updateCustomerLead(existingCustomer.id, leadData);
+  }
+
+  // Create new customer
+  const createMutation = `
+    mutation customerCreate($input: CustomerInput!) {
+      customerCreate(input: $input) {
+        customer {
+          id
+          email
+          firstName
+          lastName
+          phone
+          tags
+          note
+          createdAt
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const variables = {
+    input: {
+      email: leadData.email,
+      firstName: leadData.firstName || "",
+      lastName: leadData.lastName || "",
+      phone: leadData.phone || "",
+      tags: [...(leadData.tags || []), "chatbot-lead", `captured-${new Date().toISOString().split('T')[0]}`],
+      note: leadData.note || "Lead captured via chatbot",
+      emailMarketingConsent: leadData.marketingConsent ? {
+        marketingState: "SUBSCRIBED",
+        marketingOptInLevel: "SINGLE_OPT_IN",
+        consentUpdatedAt: new Date().toISOString(),
+      } : undefined,
+    },
+  };
+
+  const response = await fetch(
+    `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/${process.env.SHOPIFY_API_VERSION}/graphql.json`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': process.env.SHOPIFY_ACCESS_TOKEN!,
+      },
+      body: JSON.stringify({ query: createMutation, variables }),
+    }
+  );
+
+  const result = await response.json();
+  console.log('📥 Lead capture response:', JSON.stringify(result, null, 2));
+
+  if (result.errors) {
+    return {
+      success: false,
+      error: result.errors.map((e: any) => e.message).join(', '),
+    };
+  }
+
+  const userErrors = result.data?.customerCreate?.userErrors;
+  if (userErrors && userErrors.length > 0) {
+    return {
+      success: false,
+      error: userErrors.map((e: any) => e.message).join(', '),
+    };
+  }
+
+  return {
+    success: true,
+    customer: result.data?.customerCreate?.customer,
+    isNew: true,
+  };
+}
+
+// Update existing customer with new lead info
+async function updateCustomerLead(
+  customerId: string,
+  leadData: {
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+    tags?: string[];
+    note?: string;
+    marketingConsent?: boolean;
+  }
+) {
+  const updateMutation = `
+    mutation customerUpdate($input: CustomerInput!) {
+      customerUpdate(input: $input) {
+        customer {
+          id
+          email
+          firstName
+          lastName
+          tags
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const variables = {
+    input: {
+      id: customerId,
+      firstName: leadData.firstName || undefined,
+      lastName: leadData.lastName || undefined,
+      phone: leadData.phone || undefined,
+      tags: leadData.tags || [],
+      note: leadData.note || undefined,
+    },
+  };
+
+  const response = await fetch(
+    `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/${process.env.SHOPIFY_API_VERSION}/graphql.json`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': process.env.SHOPIFY_ACCESS_TOKEN!,
+      },
+      body: JSON.stringify({ query: updateMutation, variables }),
+    }
+  );
+
+  const result = await response.json();
+
+  if (result.errors || result.data?.customerUpdate?.userErrors?.length > 0) {
+    return {
+      success: false,
+      error: 'Failed to update customer',
+    };
+  }
+
+  return {
+    success: true,
+    customer: result.data?.customerUpdate?.customer,
+    isNew: false,
   };
 }

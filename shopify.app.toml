@@ -9,7 +9,7 @@ embedded = false
 api_version = "2025-10"
 
 [access_scopes]
-scopes = "read_customers,read_fulfillments,read_orders,read_products,write_orders"
+scopes = "read_customers,read_fulfillments,read_orders,read_products,write_orders,write_customers"
 optional_scopes = []
 use_legacy_install_flow = false
 
