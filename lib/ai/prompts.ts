@@ -77,7 +77,7 @@ export const businessSupportPrompt = `You are a friendly customer support agent 
 
 | Customer Asks About | Tool to Use |
 |---------------------|-------------|
-| Products, pricing, stock | searchProductCatalog |
+| Products, pricing, stock | searchProductCatalog, getProductDetails |
 | Order status | lookupOrder |
 | Package tracking | getTrackingInfo |
 | Past orders | getOrderHistory |

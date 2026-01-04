@@ -138,70 +138,99 @@ export async function searchProducts(
     return [];
   }
 
-  // Execute multiple search strategies in parallel
-  const [titleResults, tagResults, broadResults] = await Promise.all([
-    searchByTitle(tokens, limit * 2),
-    searchByTags(tokens, limit * 2),
-    searchBroad(tokens[0], limit * 3),
-  ]);
+  console.log(`[Search] Tokens: ${tokens.join(", ")}`);
 
-  // Combine, score, dedupe, and rank results
-  const allProducts = [...titleResults, ...tagResults, ...broadResults];
+  // Search for each token separately and combine results
+  const searchPromises = tokens.map((token) =>
+    executeProductQuery(token, limit * 3)
+  );
+
+  const results = await Promise.all(searchPromises);
+  const allProducts = results.flat();
   const uniqueProducts = deduplicateProducts(allProducts);
-  const scoredProducts = scoreProducts(uniqueProducts, tokens);
 
-  let results = scoredProducts
+  console.log(`[Search] Found ${uniqueProducts.length} unique products`);
+
+  // Score products based on how many tokens they match
+  const scoredProducts = scoreProducts(uniqueProducts, tokens);
+  const relevantProducts = scoredProducts.filter((sp) => sp.score > 0);
+
+  // Sort by score (highest first)
+  let finalResults = relevantProducts
     .sort((a, b) => b.score - a.score)
     .map((sp) => sp.product);
 
   if (!includeOutOfStock) {
-    results = results.filter((p) => p.totalInventory > 0);
+    finalResults = finalResults.filter((p) => p.totalInventory > 0);
   }
 
-  return results.slice(0, limit);
+  console.log(`[Search] Returning ${Math.min(finalResults.length, limit)} products`);
+
+  return finalResults.slice(0, limit);
 }
 
 function tokenizeSearchTerm(searchTerm: string): string[] {
   const stopWords = new Set([
     "the", "a", "an", "and", "or", "for", "to", "in", "on",
+    "do", "you", "have", "any", "some", "your", "i", "want", "looking",
   ]);
 
-  return searchTerm
-    .toLowerCase()
-    .replace(/['"]/g, "")
+  let normalized = searchTerm.toLowerCase();
+
+  // Handle possessives: "women's" -> "women"
+  normalized = normalized.replace(/'s\b/g, "");
+  normalized = normalized.replace(/[']/g, "");
+
+  const tokens = normalized
     .split(/\s+/)
     .map((token) => token.trim())
-    .filter((token) => token.length > 1 && !stopWords.has(token));
+    .filter((token) => token.length > 1 && !stopWords.has(token))
+    .map((token) => singularize(token)); // Convert plurals to singular
+
+  return [...new Set(tokens)]; // Remove duplicates
 }
 
-async function searchByTitle(tokens: string[], limit: number): Promise<any[]> {
-  const titleQuery = tokens
-    .map((token) => `title:*${escapeShopifyQuery(token)}*`)
-    .join(" AND ");
+// Simple singularization for common cases
+function singularize(word: string): string {
+  // Common irregular plurals
+  const irregulars: Record<string, string> = {
+    women: "women", // Keep as-is (it's already the search term we want)
+    men: "men",
+    children: "child",
+    skis: "ski",
+    goggles: "goggles", // Keep as-is
+  };
 
-  return executeProductQuery(titleQuery, limit);
-}
+  if (irregulars[word]) {
+    return irregulars[word];
+  }
 
-async function searchByTags(tokens: string[], limit: number): Promise<any[]> {
-  const tagQuery = tokens
-    .map((token) => `tag:*${escapeShopifyQuery(token)}*`)
-    .join(" OR ");
+  // Standard rules
+  if (word.endsWith("ies") && word.length > 4) {
+    return word.slice(0, -3) + "y"; // "accessories" -> "accessory"
+  }
+  if (word.endsWith("es") && word.length > 3) {
+    // "boxes" -> "box", "watches" -> "watch"
+    if (word.endsWith("shes") || word.endsWith("ches") || word.endsWith("xes") || word.endsWith("ses")) {
+      return word.slice(0, -2);
+    }
+  }
+  if (word.endsWith("s") && !word.endsWith("ss") && word.length > 3) {
+    return word.slice(0, -1); // "snowboards" -> "snowboard"
+  }
 
-  return executeProductQuery(tagQuery, limit);
-}
-
-async function searchBroad(primaryToken: string, limit: number): Promise<any[]> {
-  const query = `*${escapeShopifyQuery(primaryToken)}*`;
-  return executeProductQuery(query, limit);
+  return word;
 }
 
 async function executeProductQuery(
-  searchQuery: string,
+  searchTerm: string,
   limit: number
 ): Promise<any[]> {
-  const query = `
+  // Simple query - let Shopify do the matching
+  // Don't use wildcards - Shopify handles partial matching automatically
+  const graphqlQuery = `
     {
-      products(first: ${limit}, query: "${searchQuery}") {
+      products(first: ${limit}, query: "${escapeShopifyQuery(searchTerm)}") {
         edges {
           node {
             id
@@ -249,10 +278,12 @@ async function executeProductQuery(
   `;
 
   try {
-    const data = await shopifyAdminRequest(query);
-    return data?.data?.products?.edges?.map((e: any) => e.node) || [];
+    const data = await shopifyAdminRequest(graphqlQuery);
+    const products = data?.data?.products?.edges?.map((e: any) => e.node) || [];
+    console.log(`[Search] Query "${searchTerm}" returned ${products.length} products`);
+    return products;
   } catch (error) {
-    console.error("Shopify search error:", error);
+    console.error(`[Search] Error:`, error);
     return [];
   }
 }
@@ -280,50 +311,43 @@ function scoreProducts(products: any[], tokens: string[]): ScoredProduct[] {
     const typeLower = product.productType?.toLowerCase() || "";
     const tagsLower = (product.tags || []).join(" ").toLowerCase();
 
+    // Combine all searchable text
+    const allText = `${titleLower} ${descLower} ${typeLower} ${tagsLower}`;
+
+    const matchedTokens: string[] = [];
+
     for (const token of tokens) {
-      // Title matches (highest weight)
-      if (titleLower.includes(token)) {
-        score += 10;
-        if (new RegExp(`\\b${token}\\b`).test(titleLower)) {
-          score += 5;
-        }
-      }
+      // Check if token appears in ANY field
+      if (allText.includes(token)) {
+        matchedTokens.push(token);
 
-      // Product type matches
-      if (typeLower.includes(token)) {
-        score += 8;
-      }
-
-      // Tag matches
-      if (tagsLower.includes(token)) {
-        score += 7;
-      }
-
-      // Description matches - KEY FIX for your issue
-      if (descLower.includes(token)) {
-        score += 5;
-        if (new RegExp(`\\b${token}\\b`).test(descLower)) {
-          score += 2;
-        }
+        // Add score based on WHERE it matched
+        if (titleLower.includes(token)) score += 15;
+        if (typeLower.includes(token)) score += 10;
+        if (tagsLower.includes(token)) score += 10;
+        if (descLower.includes(token)) score += 5;
       }
     }
 
-    // Bonus for matching ALL tokens
-    const matchCount = tokens.filter(
-      (token) =>
-        titleLower.includes(token) ||
-        descLower.includes(token) ||
-        typeLower.includes(token) ||
-        tagsLower.includes(token)
-    ).length;
-
-    if (matchCount === tokens.length) {
-      score += 15;
+    // CRITICAL: For multi-token searches, REQUIRE all tokens to match
+    if (tokens.length > 1 && matchedTokens.length < tokens.length) {
+      // Not all tokens matched - exclude this product
+      console.log(`[Score] "${product.title}" excluded (matched ${matchedTokens.length}/${tokens.length}: ${matchedTokens.join(", ")})`);
+      return { product, score: 0 };
     }
 
-    // Small bonus for in-stock items
+    // Bonus for matching all tokens
+    if (matchedTokens.length === tokens.length && tokens.length > 1) {
+      score += 30;
+    }
+
+    // In stock bonus
     if (product.totalInventory > 0) {
-      score += 1;
+      score += 2;
+    }
+
+    if (score > 0) {
+      console.log(`[Score] "${product.title}" = ${score} (matched: ${matchedTokens.join(", ")})`);
     }
 
     return { product, score };
