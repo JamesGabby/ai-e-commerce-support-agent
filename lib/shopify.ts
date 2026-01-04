@@ -19,7 +19,7 @@ export async function shopifyAdminRequest(query: string) {
 // Existing function
 export async function getOrderByNumber(orderNumber: string) {
   const normalized = orderNumber.startsWith('#') ? orderNumber : `#${orderNumber}`;
-  
+
   const query = `
     {
       orders(first: 1, query: "name:${normalized}") {
@@ -357,7 +357,7 @@ function scoreProducts(products: any[], tokens: string[]): ScoredProduct[] {
 // NEW: Get order with fulfillment/tracking details
 export async function getOrderWithTracking(orderNumber: string) {
   const normalized = orderNumber.startsWith('#') ? orderNumber : `#${orderNumber}`;
-  
+
   const query = `
     {
       orders(first: 1, query: "name:${normalized}") {
@@ -401,7 +401,7 @@ export async function getOrderWithTracking(orderNumber: string) {
 
 export async function cancelOrder(orderNumber: string, reason?: string) {
   const normalized = orderNumber.startsWith('#') ? orderNumber : `#${orderNumber}`;
-  
+
   console.log('🔍 Looking up order:', normalized);
 
   // Step 1: Find the order
@@ -425,17 +425,17 @@ export async function cancelOrder(orderNumber: string, reason?: string) {
   const order = findResult?.data?.orders?.edges?.[0]?.node;
 
   if (!order) {
-    return { success: false, error: `Order ${normalized} not found` };
+    return { success: false as const, error: `Order ${normalized} not found` };
   }
 
   if (order.cancelledAt) {
-    return { success: false, error: `Order ${normalized} is already cancelled` };
+    return { success: false as const, error: `Order ${normalized} is already cancelled` };
   }
 
   if (order.displayFulfillmentStatus === 'FULFILLED') {
-    return { 
-      success: false, 
-      error: `Order ${normalized} has been fulfilled and cannot be cancelled.` 
+    return {
+      success: false as const,
+      error: `Order ${normalized} has been fulfilled and cannot be cancelled.`
     };
   }
 
@@ -482,9 +482,9 @@ export async function cancelOrder(orderNumber: string, reason?: string) {
         'Content-Type': 'application/json',
         'X-Shopify-Access-Token': process.env.SHOPIFY_ACCESS_TOKEN!,
       },
-      body: JSON.stringify({ 
-        query: cancelMutation, 
-        variables 
+      body: JSON.stringify({
+        query: cancelMutation,
+        variables
       }),
     }
   );
@@ -494,23 +494,23 @@ export async function cancelOrder(orderNumber: string, reason?: string) {
 
   // Check for errors
   if (result.errors) {
-    return { 
-      success: false, 
+    return {
+      success: false as const,
       error: result.errors.map((e: any) => e.message).join(', ')
     };
   }
 
   const userErrors = result.data?.orderCancel?.orderCancelUserErrors;
   if (userErrors && userErrors.length > 0) {
-    return { 
-      success: false, 
+    return {
+      success: false as const,
       error: userErrors.map((e: any) => e.message).join(', ')
     };
   }
 
   // Success!
-  return { 
-    success: true, 
+  return {
+    success: true,
     orderNumber: order.name,
     message: `Order ${order.name} has been cancelled. Customer will be notified and refunded.`
   };
@@ -519,19 +519,19 @@ export async function cancelOrder(orderNumber: string, reason?: string) {
 // Map reason to GraphQL enum
 function mapCancelReasonGraphQL(reason?: string): string {
   const reasonLower = reason?.toLowerCase() || '';
-  
+
   if (reasonLower.includes('fraud')) return 'FRAUD';
   if (reasonLower.includes('inventory') || reasonLower.includes('stock')) return 'INVENTORY';
   if (reasonLower.includes('declined')) return 'DECLINED';
   if (reasonLower.includes('other')) return 'OTHER';
-  
+
   return 'CUSTOMER'; // Default
 }
 
 // Verify order belongs to customer by email
 export async function verifyOrderOwnership(orderNumber: string, email: string) {
   const normalized = orderNumber.startsWith('#') ? orderNumber : `#${orderNumber}`;
-  
+
   const query = `
     {
       orders(first: 1, query: "name:${normalized}") {
@@ -572,8 +572,8 @@ export async function verifyOrderOwnership(orderNumber: string, email: string) {
   const orderEmail = order.email?.toLowerCase().trim();
   const customerObjectEmail = order.customer?.email?.toLowerCase().trim();
 
-  const emailMatches = 
-    orderEmail === customerEmail || 
+  const emailMatches =
+    orderEmail === customerEmail ||
     customerObjectEmail === customerEmail;
 
   if (!emailMatches) {
@@ -634,24 +634,24 @@ export async function updateOrderShippingAddress(
   const order = findResult?.data?.orders?.edges?.[0]?.node;
 
   if (!order) {
-    return { success: false, error: `Order ${normalized} not found` };
+    return { success: false as const, error: `Order ${normalized} not found` };
   }
 
   if (order.cancelledAt) {
-    return { success: false, error: `Order ${normalized} has been cancelled` };
+    return { success: false as const, error: `Order ${normalized} has been cancelled` };
   }
 
   if (order.displayFulfillmentStatus === 'FULFILLED') {
-    return { 
-      success: false, 
+    return {
+      success: false as const,
       error: `Order ${normalized} has already been shipped. We cannot change the address once an order is in transit.`,
       suggestion: "Please contact the shipping carrier directly to redirect the package."
     };
   }
 
   if (order.displayFulfillmentStatus === 'IN_PROGRESS') {
-    return { 
-      success: false, 
+    return {
+      success: false as const,
       error: `Order ${normalized} is currently being prepared for shipment. The address may not be changeable at this point.`,
       suggestion: "Please contact support immediately at support@techgearsnowboards.com"
     };
@@ -720,7 +720,7 @@ export async function updateOrderShippingAddress(
   // Check for errors
   if (result.errors) {
     return {
-      success: false,
+      success: false as const,
       error: result.errors.map((e: any) => e.message).join(', '),
     };
   }
@@ -728,13 +728,13 @@ export async function updateOrderShippingAddress(
   const userErrors = result.data?.orderUpdate?.userErrors;
   if (userErrors && userErrors.length > 0) {
     return {
-      success: false,
+      success: false as const,
       error: userErrors.map((e: any) => e.message).join(', '),
     };
   }
 
   const updatedOrder = result.data?.orderUpdate?.order;
-  
+
   if (updatedOrder) {
     return {
       success: true,
@@ -745,12 +745,12 @@ export async function updateOrderShippingAddress(
   }
 
   return {
-    success: false,
+    success: false as const,
     error: 'Unexpected error updating address',
   };
 }
 
-type LeadCaptureResult = 
+type LeadCaptureResult =
   | { success: true; customer: any; isNew: boolean }
   | { success: false; error: string };
 
@@ -828,7 +828,7 @@ export async function captureLeadInShopify(leadData: {
 
   if (result.errors) {
     return {
-      success: false,
+      success: false as const,
       error: result.errors.map((e: any) => e.message).join(', '),
     };
   }
@@ -836,7 +836,7 @@ export async function captureLeadInShopify(leadData: {
   const userErrors = result.data?.customerCreate?.userErrors;
   if (userErrors && userErrors.length > 0) {
     return {
-      success: false,
+      success: false as const,
       error: userErrors.map((e: any) => e.message).join(', '),
     };
   }
@@ -905,13 +905,13 @@ async function updateCustomerLead(
 
   if (result.errors || result.data?.customerUpdate?.userErrors?.length > 0) {
     return {
-      success: false,
+      success: false as const,
       error: 'Failed to update customer',
     };
   }
 
   return {
-    success: true,
+    success: true as const,
     customer: result.data?.customerUpdate?.customer,
     isNew: false,
   };
