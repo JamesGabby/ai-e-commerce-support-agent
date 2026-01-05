@@ -45,7 +45,7 @@ export const captureLead = tool({
     source: z
       .enum([
         "restock_notification",
-        "product_inquiry", 
+        "product_inquiry",
         "newsletter",
         "quote_request",
         "general"
@@ -68,11 +68,11 @@ export const captureLead = tool({
       }
 
       const note = `
-Lead captured via chatbot
-Source: ${input.source}
-Interest: ${input.interest}
-Marketing consent: ${input.marketingConsent ? 'Yes' : 'No'}
-Captured at: ${new Date().toISOString()}
+        Lead captured via chatbot
+        Source: ${input.source}
+        Interest: ${input.interest}
+        Marketing consent: ${input.marketingConsent ? 'Yes' : 'No'}
+        Captured at: ${new Date().toISOString()}
       `.trim();
 
       const result = await captureLeadInShopify({

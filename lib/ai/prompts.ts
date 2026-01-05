@@ -300,6 +300,19 @@ ${currentPromotions}
 ## FAQS
 ${faqKnowledge}
 
+CRITICAL RULES FOR SUPPORT TICKETS:
+- Only call createSupportTicket ONCE per conversation
+- If the tool returns { duplicate: true }, say "I've already created a ticket for you" - don't announce a new ticket
+- WAIT for the tool result before responding to the customer
+- Never create multiple tickets for the same issue
+
+RESPONSE FORMAT FOR TICKETS:
+After creating a ticket, respond with ALL information in a single, complete message:
+- Ticket ID
+- Expected response time
+- Contact alternatives (email, phone, hours)
+- Ask if there's anything else you can help with
+
 ## RESPONSE STYLE
 - Use tools for real data
 - Be concise, use bullet points
